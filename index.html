@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dvary Translator Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+
+    <div class="sidebar" id="mySidebar">
+        <div class="sidebar-header">
+            <h3>DVARY MENU</h3>
+        </div>
+        <a href="#"><i class="fas fa-home"></i> Nyumbani</a>
+        <a href="#"><i class="fas fa-code"></i> Miradi Mingine</a>
+        <a href="https://wa.me/225752670587"><i class="fas fa-user-tie"></i> Kuhusu Mwalimu</a>
+        <a href="#"><i class="fas fa-book"></i> Mafunzo</a>
+    </div>
+
+    <div class="main-content">
+        <div class="card">
+            <h2><i class="fas fa-language"></i> DVARY TRANSLATE</h2>
+            <p style="text-align: center; color: #888; font-size: 13px;">Tafsiri Kiswahili kwenda Kiingereza Bure</p>
+            
+            <textarea id="inputText" placeholder="Andika Kiswahili hapa..."></textarea>
+            <button class="btn-translate" id="transBtn" onclick="translateText()">TAFSIRI SASA</button>
+            
+            <div id="loader" class="loader"></div>
+
+            <div id="resultBox" class="result-box">
+                <small style="color: #a29bfe;">ENGLISH TRANSLATION:</small>
+                <p id="outputText"></p>
+                <button class="copy-btn" onclick="copyText()"><i class="fas fa-copy"></i> Copy</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="wa-float-container">
+        <a href="https://wa.me/225752670587?text=Msaada" class="wa-btn bg-help" title="Msaada"><i class="fas fa-question"></i></a>
+        <a href="https://wa.me/225752670587?text=Info" class="wa-btn bg-info" title="Taarifa"><i class="fas fa-info"></i></a>
+        <a href="https://wa.me/225752670587" class="wa-btn bg-wa" title="WhatsApp Chat"><i class="fab fa-whatsapp"></i></a>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
