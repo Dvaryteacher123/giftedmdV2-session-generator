@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dvary Cloud Drive Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --primary: #00a8ff; 
+            --dark: #0f172a; 
+            --card: #1e293b; 
+            --success: #00d2d3;
+            --accent: #6c5ce7;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--dark); 
+            color: white; 
+            margin: 0; 
+            overflow-x: hidden;
+        }
+
+        /* SIDEBAR */
+        .sidebar { 
+            position: fixed; 
+            left: -260px; 
+            top: 0; 
+            width: 250px; 
+            height: 100%; 
+            background: #000; 
+            transition: 0.4s ease-in-out; 
+            z-index: 1000; 
+            padding-top: 60px; 
+            border-right: 1px solid #333; 
+        }
+        .sidebar.active { left: 0; }
+        
+        .sidebar h3 {
+            text-align: center;
+            color: var(--primary);
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .sidebar a { 
+            padding: 15px 25px; 
+            text-decoration: none; 
+            color: #aaa; 
+            display: block; 
+            border-bottom: 1px solid #111;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .sidebar a:hover { 
+            background: var(--primary); 
+            color: white; 
+            padding-left: 35px;
+        }
+        
+        /* MENU BUTTON */
+        .menu-btn { 
+            position: fixed; 
+            top: 20px; 
+            left: 20px; 
+            font-size: 22px; 
+            cursor: pointer; 
+            z-index: 1100; 
+            background: var(--primary); 
+            color: white; 
+            width: 45px; 
+            height: 45px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        /* MAIN CONTENT */
+        .container { 
+            max-width: 500px; 
+            margin: 90px auto; 
+            padding: 20px; 
+        }
+
+        .upload-card { 
+            background: var(--card); 
+            padding: 30px; 
+            border-radius: 25px; 
+            text-align: center; 
+            border: 1px solid #334155; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .drop-zone { 
+            border: 2px dashed var(--primary); 
+            padding: 40px 20px; 
+            border-radius: 20px; 
+            cursor: pointer; 
+            margin-bottom: 20px; 
+            transition: 0.3s; 
+            background: rgba(255,255,255,0.02);
+        }
+        .drop-zone:hover { background: rgba(0, 168, 255, 0.1); }
+        .drop-zone i { font-size: 50px; color: var(--primary); margin-bottom: 15px; }
+
+        .btn-upload { 
+            width: 100%; 
+            padding: 16px; 
+            background: var(--primary); 
+            border: none; 
+            border-radius: 15px; 
+            color: white; 
+            font-weight: bold; 
+            cursor: pointer; 
+            font-size: 16px; 
+            transition: 0.3s;
+        }
+        .btn-upload:active { transform: scale(0.98); }
+        
+        /* FILE LIST AREA */
+        #fileList { margin-top: 30px; }
+        .file-item { 
+            background: #111827; 
+            padding: 15px; 
+            border-radius: 12px; 
+            margin-bottom: 10px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            border: 1px solid #333; 
+            animation: fadeIn 0.5s;
+        }
+        .file-item span { font-size: 14px; display: flex; align-items: center; gap: 10px; }
+        .file-item a { 
+            color: var(--success); 
+            text-decoration: none; 
+            font-size: 11px; 
+            font-weight: bold; 
+            border: 1px solid var(--success);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        /* WHATSAPP FLOATING BUTTONS */
+        .wa-float { 
+            position: fixed; 
+            right: 20px; 
+            bottom: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            z-index: 1000; 
+        }
+        .wa-btn { 
+            width: 55px; 
+            height: 55px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: white; 
+            text-decoration: none; 
+            font-size: 24px; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5); 
+            transition: 0.3s; 
+        }
+        .wa-btn:hover { transform: scale(1.1); }
+        .bg-wa { background: #25D366; }
+        .bg-info { background: #0088cc; }
+        .bg-help { background: #ff9800; }
+
+        /* ANIMATIONS */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .loader { 
+            width: 30px; 
+            height: 30px; 
+            border: 4px solid #f3f3f3; 
+            border-top: 4px solid var(--primary); 
+            border-radius: 50%; 
+            animation: spin 1s linear infinite; 
+            margin: 15px auto; 
+            display: none; 
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+
+    <div class="sidebar" id="mySidebar">
+        <h3>DVARY CLOUD DRIVE</h3>
+        <a onclick="displayFiles('all')"><i class="fas fa-folder-open"></i> Mafaili Yangu</a>
+        <a onclick="displayFiles('video')"><i class="fas fa-video"></i> Video Zangu</a>
+        <a onclick="displayFiles('docs')"><i class="fas fa-file-pdf"></i> Documents</a>
+        <a onclick="location.reload()"><i class="fas fa-sync"></i> Refresh Drive</a>
+    </div>
+
+    <div class="container">
+        <div class="upload-card">
+            <h2 style="margin-top: 0;">DVARY DRIVE</h2>
+            <p style="font-size: 13px; color: #888; margin-bottom: 20px;">Hifadhi Video, PDF, au Picha sasa.</p>
+            
+            <div class="drop-zone" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p id="fileName">Gusa kuchagua faili</p>
+                <input type="file" id="fileInput" class="hidden" onchange="updateFileName()">
+            </div>
+
+            <button class="btn-upload" onclick="uploadProcess()">PANDISHA (UPLOAD)</button>
+            <div id="loader" class="loader"></div>
+        </div>
+
+        <div id="fileList">
+            <h4 id="categoryTitle" style="border-bottom: 1px solid #333; padding-bottom: 10px; margin-top: 30px;">MAFFAILI YOTE</h4>
+            <div id="itemsContainer">
+                </div>
+        </div>
+    </div>
+
+    <div class="wa-float">
+        <a href="https://wa.me/225752670587?text=Msaada+Drive" class="wa-btn bg-help"><i class="fas fa-question"></i></a>
+        <a href="https://wa.me/225752670587?text=Habari+Mwalimu" class="wa-btn bg-info"><i class="fas fa-info"></i></a>
+        <a href="https://wa.me/225752670587" class="wa-btn bg-wa"><i class="fab fa-whatsapp"></i></a>
+    </div>
+
+    <script>
+        // Database ya muda ya mafaili
+        let myFiles = [];
+
+        function toggleSidebar() {
+            document.getElementById("mySidebar").classList.toggle("active");
+        }
+
+        function updateFileName() {
+            const input = document.getElementById('fileInput');
+            if(input.files[0]) {
+                document.getElementById('fileName').innerText = input.files[0].name;
+                document.getElementById('fileName').style.color = "#00d2d3";
+            }
+        }
+
+        function uploadProcess() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            if(!file) {
+                alert("Tafadhali chagua faili kwanza!");
+                return;
+            }
+
+            document.getElementById('loader').style.display = 'block';
+
+            // Simulation ya ku-upload
+            setTimeout(() => {
+                const newFile = {
+                    name: file.name,
+                    type: file.type,
+                    size: (file.size / 1024).toFixed(1) + " KB",
+                    icon: getIcon(file.type)
+                };
+
+                myFiles.push(newFile);
+                displayFiles('all');
+
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('fileName').innerText = "Gusa kuchagua faili";
+                document.getElementById('fileName').style.color = "#888";
+                fileInput.value = ""; 
+                alert("✅ Faili limehifadhiwa!");
+            }, 2000);
+        }
+
+        function getIcon(type) {
+            if(type.includes('video')) return 'fa-video';
+            if(type.includes('pdf')) return 'fa-file-pdf';
+            if(type.includes('image')) return 'fa-file-image';
+            return 'fa-file-alt';
+        }
+
+        function displayFiles(category) {
+            const container = document.getElementById('itemsContainer');
+            const title = document.getElementById('categoryTitle');
+            container.innerHTML = "";
+
+            let filtered = myFiles;
+            title.innerText = "MAFFAILI YOTE";
+
+            if(category === 'video') {
+                filtered = myFiles.filter(f => f.type.includes('video'));
+                title.innerText = "VIDEO ZANGU";
+            } else if(category === 'docs') {
+                filtered = myFiles.filter(f => f.type.includes('pdf') || f.type.includes('word') || f.type.includes('text'));
+                title.innerText = "DOCUMENTS";
+            }
+
+            if(filtered.length === 0) {
+                container.innerHTML = `<p style="text-align:center; color:#555; font-size:12px; margin-top:20px;">Hakuna faili lililopatikana hapa.</p>`;
+            } else {
+                filtered.forEach(f => {
+                    const div = document.createElement('div');
+                    div.className = 'file-item';
+                    div.innerHTML = `
+                        <span><i class="fas ${f.icon}" style="color:var(--primary)"></i> ${f.name} <br><small style="color:#555">${f.size}</small></span>
+                        <a href="#" onclick="alert('Inapakua...')">DOWNLOAD</a>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+
+            // Funga sidebar kwenye simu baada ya kuchagua
+            if(window.innerWidth < 768) {
+                document.getElementById("mySidebar").classList.remove("active");
+            }
+        }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dvary Cloud Drive Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --primary: #00a8ff; 
+            --dark: #0f172a; 
+            --card: #1e293b; 
+            --success: #00d2d3;
+            --accent: #6c5ce7;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--dark); 
+            color: white; 
+            margin: 0; 
+            overflow-x: hidden;
+        }
+
+        /* SIDEBAR */
+        .sidebar { 
+            position: fixed; 
+            left: -260px; 
+            top: 0; 
+            width: 250px; 
+            height: 100%; 
+            background: #000; 
+            transition: 0.4s ease-in-out; 
+            z-index: 1000; 
+            padding-top: 60px; 
+            border-right: 1px solid #333; 
+        }
+        .sidebar.active { left: 0; }
+        
+        .sidebar h3 {
+            text-align: center;
+            color: var(--primary);
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .sidebar a { 
+            padding: 15px 25px; 
+            text-decoration: none; 
+            color: #aaa; 
+            display: block; 
+            border-bottom: 1px solid #111;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .sidebar a:hover { 
+            background: var(--primary); 
+            color: white; 
+            padding-left: 35px;
+        }
+        
+        /* MENU BUTTON */
+        .menu-btn { 
+            position: fixed; 
+            top: 20px; 
+            left: 20px; 
+            font-size: 22px; 
+            cursor: pointer; 
+            z-index: 1100; 
+            background: var(--primary); 
+            color: white; 
+            width: 45px; 
+            height: 45px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        /* MAIN CONTENT */
+        .container { 
+            max-width: 500px; 
+            margin: 90px auto; 
+            padding: 20px; 
+        }
+
+        .upload-card { 
+            background: var(--card); 
+            padding: 30px; 
+            border-radius: 25px; 
+            text-align: center; 
+            border: 1px solid #334155; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .drop-zone { 
+            border: 2px dashed var(--primary); 
+            padding: 40px 20px; 
+            border-radius: 20px; 
+            cursor: pointer; 
+            margin-bottom: 20px; 
+            transition: 0.3s; 
+            background: rgba(255,255,255,0.02);
+        }
+        .drop-zone:hover { background: rgba(0, 168, 255, 0.1); }
+        .drop-zone i { font-size: 50px; color: var(--primary); margin-bottom: 15px; }
+
+        .btn-upload { 
+            width: 100%; 
+            padding: 16px; 
+            background: var(--primary); 
+            border: none; 
+            border-radius: 15px; 
+            color: white; 
+            font-weight: bold; 
+            cursor: pointer; 
+            font-size: 16px; 
+            transition: 0.3s;
+        }
+        .btn-upload:active { transform: scale(0.98); }
+        
+        /* FILE LIST AREA */
+        #fileList { margin-top: 30px; }
+        .file-item { 
+            background: #111827; 
+            padding: 15px; 
+            border-radius: 12px; 
+            margin-bottom: 10px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            border: 1px solid #333; 
+            animation: fadeIn 0.5s;
+        }
+        .file-item span { font-size: 14px; display: flex; align-items: center; gap: 10px; }
+        .file-item a { 
+            color: var(--success); 
+            text-decoration: none; 
+            font-size: 11px; 
+            font-weight: bold; 
+            border: 1px solid var(--success);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        /* WHATSAPP FLOATING BUTTONS */
+        .wa-float { 
+            position: fixed; 
+            right: 20px; 
+            bottom: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            z-index: 1000; 
+        }
+        .wa-btn { 
+            width: 55px; 
+            height: 55px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: white; 
+            text-decoration: none; 
+            font-size: 24px; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5); 
+            transition: 0.3s; 
+        }
+        .wa-btn:hover { transform: scale(1.1); }
+        .bg-wa { background: #25D366; }
+        .bg-info { background: #0088cc; }
+        .bg-help { background: #ff9800; }
+
+        /* ANIMATIONS */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .loader { 
+            width: 30px; 
+            height: 30px; 
+            border: 4px solid #f3f3f3; 
+            border-top: 4px solid var(--primary); 
+            border-radius: 50%; 
+            animation: spin 1s linear infinite; 
+            margin: 15px auto; 
+            display: none; 
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+
+    <div class="sidebar" id="mySidebar">
+        <h3>DVARY CLOUD DRIVE</h3>
+        <a onclick="displayFiles('all')"><i class="fas fa-folder-open"></i> Mafaili Yangu</a>
+        <a onclick="displayFiles('video')"><i class="fas fa-video"></i> Video Zangu</a>
+        <a onclick="displayFiles('docs')"><i class="fas fa-file-pdf"></i> Documents</a>
+        <a onclick="location.reload()"><i class="fas fa-sync"></i> Refresh Drive</a>
+    </div>
+
+    <div class="container">
+        <div class="upload-card">
+            <h2 style="margin-top: 0;">DVARY DRIVE</h2>
+            <p style="font-size: 13px; color: #888; margin-bottom: 20px;">Hifadhi Video, PDF, au Picha sasa.</p>
+            
+            <div class="drop-zone" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p id="fileName">Gusa kuchagua faili</p>
+                <input type="file" id="fileInput" class="hidden" onchange="updateFileName()">
+            </div>
+
+            <button class="btn-upload" onclick="uploadProcess()">PANDISHA (UPLOAD)</button>
+            <div id="loader" class="loader"></div>
+        </div>
+
+        <div id="fileList">
+            <h4 id="categoryTitle" style="border-bottom: 1px solid #333; padding-bottom: 10px; margin-top: 30px;">MAFFAILI YOTE</h4>
+            <div id="itemsContainer">
+                </div>
+        </div>
+    </div>
+
+    <div class="wa-float">
+        <a href="https://wa.me/225752670587?text=Msaada+Drive" class="wa-btn bg-help"><i class="fas fa-question"></i></a>
+        <a href="https://wa.me/225752670587?text=Habari+Mwalimu" class="wa-btn bg-info"><i class="fas fa-info"></i></a>
+        <a href="https://wa.me/225752670587" class="wa-btn bg-wa"><i class="fab fa-whatsapp"></i></a>
+    </div>
+
+    <script>
+        // Database ya muda ya mafaili
+        let myFiles = [];
+
+        function toggleSidebar() {
+            document.getElementById("mySidebar").classList.toggle("active");
+        }
+
+        function updateFileName() {
+            const input = document.getElementById('fileInput');
+            if(input.files[0]) {
+                document.getElementById('fileName').innerText = input.files[0].name;
+                document.getElementById('fileName').style.color = "#00d2d3";
+            }
+        }
+
+        function uploadProcess() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            if(!file) {
+                alert("Tafadhali chagua faili kwanza!");
+                return;
+            }
+
+            document.getElementById('loader').style.display = 'block';
+
+            // Simulation ya ku-upload
+            setTimeout(() => {
+                const newFile = {
+                    name: file.name,
+                    type: file.type,
+                    size: (file.size / 1024).toFixed(1) + " KB",
+                    icon: getIcon(file.type)
+                };
+
+                myFiles.push(newFile);
+                displayFiles('all');
+
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('fileName').innerText = "Gusa kuchagua faili";
+                document.getElementById('fileName').style.color = "#888";
+                fileInput.value = ""; 
+                alert("✅ Faili limehifadhiwa!");
+            }, 2000);
+        }
+
+        function getIcon(type) {
+            if(type.includes('video')) return 'fa-video';
+            if(type.includes('pdf')) return 'fa-file-pdf';
+            if(type.includes('image')) return 'fa-file-image';
+            return 'fa-file-alt';
+        }
+
+        function displayFiles(category) {
+            const container = document.getElementById('itemsContainer');
+            const title = document.getElementById('categoryTitle');
+            container.innerHTML = "";
+
+            let filtered = myFiles;
+            title.innerText = "MAFFAILI YOTE";
+
+            if(category === 'video') {
+                filtered = myFiles.filter(f => f.type.includes('video'));
+                title.innerText = "VIDEO ZANGU";
+            } else if(category === 'docs') {
+                filtered = myFiles.filter(f => f.type.includes('pdf') || f.type.includes('word') || f.type.includes('text'));
+                title.innerText = "DOCUMENTS";
+            }
+
+            if(filtered.length === 0) {
+                container.innerHTML = `<p style="text-align:center; color:#555; font-size:12px; margin-top:20px;">Hakuna faili lililopatikana hapa.</p>`;
+            } else {
+                filtered.forEach(f => {
+                    const div = document.createElement('div');
+                    div.className = 'file-item';
+                    div.innerHTML = `
+                        <span><i class="fas ${f.icon}" style="color:var(--primary)"></i> ${f.name} <br><small style="color:#555">${f.size}</small></span>
+                        <a href="#" onclick="alert('Inapakua...')">DOWNLOAD</a>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+
+            // Funga sidebar kwenye simu baada ya kuchagua
+            if(window.innerWidth < 768) {
+                document.getElementById("mySidebar").classList.remove("active");
+            }
+        }
+    </script>
+</body>
+</html>
+
