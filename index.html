@@ -1,55 +1,134 @@
 <!DOCTYPE html>
-<html lang="sw">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dvary WiFi Scanner</title>
+    <title>DVARY ANONYMOUS | CONFESSIONS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; text-align: center; padding: 20px; }
-        .radar { border: 2px solid #0f0; border-radius: 50%; width: 200px; height: 200px; margin: 20px auto; position: relative; overflow: hidden; }
-        .sweep { position: absolute; width: 100%; height: 100%; background: linear-gradient(90deg, rgba(0,255,0,0.2) 0%, transparent 50%); animation: spin 2s linear infinite; transform-origin: center; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .wifi-list { text-align: left; background: #111; padding: 15px; border-radius: 10px; border: 1px solid #333; margin-top: 20px; }
-        .wifi-item { border-bottom: 1px solid #222; padding: 10px 0; display: flex; justify-content: space-between; }
-        .btn-scan { background: #0f0; color: #000; border: none; padding: 15px 30px; font-weight: bold; border-radius: 5px; cursor: pointer; width: 100%; }
-        .lock-icon { color: #f00; }
+        :root { --neon: #00ffcc; --dark: #070b14; --card: #111827; }
+        body { font-family: 'Courier New', monospace; background: var(--dark); color: var(--neon); margin: 0; padding-bottom: 80px; overflow-x: hidden; }
+        
+        /* HEADER */
+        .header { text-align: center; padding: 40px 20px; border-bottom: 1px solid #222; background: #000; }
+        .logo { font-size: 24px; font-weight: 900; letter-spacing: 5px; cursor: pointer; }
+
+        /* MAIN CONTENT */
+        .container { padding: 20px; max-width: 500px; margin: auto; }
+        .card { background: var(--card); border: 1px solid var(--neon); padding: 25px; border-radius: 15px; box-shadow: 0 0 15px rgba(0, 255, 204, 0.1); }
+        
+        textarea { width: 100%; height: 150px; background: #000; border: 1px solid #333; color: var(--neon); padding: 15px; border-radius: 10px; resize: none; box-sizing: border-box; outline: none; margin-bottom: 20px; font-family: monospace; }
+        textarea:focus { border-color: var(--neon); }
+
+        .btn-send { width: 100%; padding: 15px; background: var(--neon); color: #000; border: none; font-weight: bold; border-radius: 10px; cursor: pointer; letter-spacing: 2px; }
+
+        /* ADMIN PANEL (HIDDEN) */
+        #adminPanel { display: none; margin-top: 30px; border-top: 2px dashed #444; padding-top: 20px; }
+        .confession-list { background: #000; border-left: 3px solid var(--neon); padding: 15px; margin-bottom: 10px; font-size: 13px; color: #fff; }
+
+        /* BOTTOM NAV */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #222; }
+        .nav-item { color: #555; text-align: center; cursor: pointer; font-size: 11px; }
+        .nav-item.active { color: var(--neon); }
+        .nav-item i { font-size: 20px; display: block; }
     </style>
 </head>
 <body>
 
-    <h1>DVARY WIFI SCANNER</h1>
-    <div class="radar"><div class="sweep"></div></div>
-
-    <button class="btn-scan" onclick="startScan()">ANZA KU-SCAN WIFI</button>
-
-    <div id="results" class="wifi-list" style="display:none;">
-        <div class="wifi-item"><span>TP-Link_9920</span> <span class="lock-icon">🔒 WPA2</span></div>
-        <div class="wifi-item"><span>Vodacom_Fast</span> <span style="color:#0f0;">🔓 Open</span></div>
-        <div class="wifi-item"><span>iPhone_Elia</span> <span class="lock-icon">🔒 WPA3</span></div>
-        <div class="wifi-item"><span>Tigo_4G_Home</span> <span class="lock-icon">🔒 WPA2</span></div>
+    <div class="header">
+        <div class="logo" id="logoBtn">DVARY_ANON</div>
+        <p style="font-size: 10px; color: #555;">[ IDENTITY: ENCRYPTED ]</p>
     </div>
 
-    <div id="status" style="margin-top:20px; font-size:12px;">Bonyeza kitufe kuanza kutafuta mitandao jirani...</div>
+    <div class="container">
+        <div id="userView">
+            <div class="card">
+                <h3 style="text-align: center; margin-top: 0;">POST A CONFESSION</h3>
+                <p style="font-size: 11px; color: #888; text-align: center;">Share your secret. No names, no tracking, pure anonymity.</p>
+                <textarea id="confessionText" placeholder="Write your secret here..."></textarea>
+                <button class="btn-send" onclick="sendConfession()">SEND ANONYMOUSLY</button>
+            </div>
+        </div>
 
-<script>
-    function startScan() {
-        const status = document.getElementById('status');
-        const results = document.getElementById('results');
-        status.innerHTML = "Inatafuta mitandao... Tafadhali subiri.";
-        
-        setTimeout(() => {
-            status.innerHTML = "Imepata mitandao 4 jirani!";
-            results.style.display = "block";
-            
-            // Mtego wako wa pesa unaingia hapa
-            setTimeout(() => {
-                alert("Ili kuona Password za hii mitandao, unahitaji Dvary Premium Key.");
-                window.location.href = "https://dvary-bot-letf.vercel.app/"; // Link yako ya malipo
-            }, 3000);
-        }, 3000);
-    }
-</script>
+        <div id="adminPanel">
+            <h3 style="color: var(--neon);">ADMIN: ALL CONFESSIONS</h3>
+            <div id="listContainer">
+                <p style="color: #444;">No secrets yet...</p>
+            </div>
+            <button onclick="clearAll()" style="background: red; color: #fff; border: none; padding: 10px; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 10px;">CLEAR DATABASE</button>
+        </div>
+    </div>
 
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="showTab('user')">
+            <i class="fas fa-user-secret"></i> Confess
+        </div>
+        <div class="nav-item" onclick="alert('Join Dvary VIP Group to see public board!')">
+            <i class="fas fa-globe"></i> Public Board
+        </div>
+        <div class="nav-item" onclick="alert('Dvary Bot v1.0.0 Status: Running')">
+            <i class="fas fa-shield-halved"></i> Security
+        </div>
+    </div>
+
+    <script>
+        // Hapa ndipo siri zinapohifadhiwa (kwenye browser yako kwa sasa)
+        let confessions = JSON.parse(localStorage.getItem('dvary_secrets')) || [];
+
+        // Siri ya kuingia Admin: Bonyeza Logo mara 5
+        let tapCount = 0;
+        document.getElementById('logoBtn').addEventListener('click', () => {
+            tapCount++;
+            if(tapCount >= 5) {
+                document.getElementById('adminPanel').style.display = 'block';
+                document.getElementById('userView').style.display = 'none';
+                renderAdminList();
+                alert("ACCESS GRANTED, COMMANDER ELIA.");
+                tapCount = 0;
+            }
+        });
+
+        function sendConfession() {
+            const text = document.getElementById('confessionText').value;
+            if(!text) return alert("Write something first!");
+
+            const time = new Date().toLocaleString();
+            confessions.push({ msg: text, date: time });
+            localStorage.setItem('dvary_secrets', JSON.stringify(confessions));
+
+            alert("SUCCESS! Your confession has been sent to the encrypted vault.");
+            document.getElementById('confessionText').value = "";
+        }
+
+        function renderAdminList() {
+            const container = document.getElementById('listContainer');
+            container.innerHTML = "";
+            if(confessions.length === 0) {
+                container.innerHTML = "<p style='color:#444'>Database empty.</p>";
+                return;
+            }
+            confessions.forEach(item => {
+                const div = document.createElement('div');
+                div.className = "confession-list";
+                div.innerHTML = `<strong>[${item.date}]</strong><br>${item.msg}`;
+                container.appendChild(div);
+            });
+        }
+
+        function showTab(type) {
+            if(type === 'user') {
+                document.getElementById('adminPanel').style.display = 'none';
+                document.getElementById('userView').style.display = 'block';
+            }
+        }
+
+        function clearAll() {
+            if(confirm("Delete all secrets from database?")) {
+                confessions = [];
+                localStorage.removeItem('dvary_secrets');
+                renderAdminList();
+            }
+        }
+    </script>
 </body>
 </html>
-
