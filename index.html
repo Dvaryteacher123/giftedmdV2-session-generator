@@ -1,21 +1,27 @@
 <!DOCTYPE html>
-<html lang="sw">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DVARY UNBAN | PRO APPEAL</title>
+    <title>DVARY UNBAN | GLOBAL EDITION</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --neon: #00ffcc; --bg: #000; }
-        body { background-color: var(--bg); color: var(--neon); font-family: 'Share Tech Mono', monospace; margin: 0; overflow: hidden; height: 100vh; }
+        :root { --p: #00ffcc; --bg: #000; }
+        body { background: var(--bg); color: var(--p); font-family: 'Share Tech Mono', monospace; margin: 0; overflow: hidden; height: 100vh; }
         #matrix { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.3; }
-        .container { position: relative; z-index: 10; max-width: 420px; margin: 40px auto; background: rgba(13, 17, 23, 0.95); padding: 25px; border-radius: 15px; border: 1px solid var(--neon); box-shadow: 0 0 30px rgba(0, 255, 204, 0.4); text-align: center; }
-        .logo { font-size: 24px; font-weight: bold; letter-spacing: 4px; margin-bottom: 5px; text-shadow: 0 0 10px var(--neon); }
-        .subtitle { font-size: 10px; color: #888; margin-bottom: 20px; }
-        input { width: 100%; padding: 15px; background: rgba(0,0,0,0.8); border: 1px solid #222; color: #fff; border-radius: 5px; margin-bottom: 15px; box-sizing: border-box; outline: none; font-family: inherit; }
-        textarea { width: 100%; padding: 15px; background: rgba(0,0,0,0.8); border: 1px solid #222; color: #fff; border-radius: 5px; margin-bottom: 15px; box-sizing: border-box; outline: none; font-family: inherit; font-size: 12px; resize: none; border-left: 3px solid var(--neon); }
-        .btn-send { width: 100%; padding: 18px; background: var(--neon); color: #000; border: none; border-radius: 5px; font-weight: 900; cursor: pointer; letter-spacing: 2px; }
-        .channel-link { display: inline-block; margin-top: 20px; padding: 10px 15px; border: 1px solid var(--neon); color: var(--neon); text-decoration: none; font-size: 11px; border-radius: 20px; }
+        
+        /* LANGUAGE SELECTOR */
+        .lang-bar { position: relative; z-index: 100; background: rgba(0,0,0,0.8); padding: 10px; display: flex; justify-content: center; border-bottom: 1px solid var(--p); }
+        select { background: #000; color: var(--p); border: 1px solid var(--p); padding: 5px 10px; border-radius: 5px; outline: none; cursor: pointer; }
+
+        .container { position: relative; z-index: 10; max-width: 420px; margin: 20px auto; background: rgba(13, 17, 23, 0.95); padding: 25px; border-radius: 15px; border: 1px solid var(--p); box-shadow: 0 0 30px rgba(0, 255, 204, 0.4); text-align: center; }
+        .logo { font-size: 24px; font-weight: bold; letter-spacing: 4px; margin-bottom: 5px; text-shadow: 0 0 10px var(--p); }
+        
+        input, textarea { width: 100%; padding: 15px; background: rgba(0,0,0,0.8); border: 1px solid #222; color: #fff; border-radius: 5px; margin-bottom: 15px; box-sizing: border-box; outline: none; font-family: inherit; font-size: 12px; }
+        textarea { border-left: 3px solid var(--p); resize: none; }
+        
+        .btn-send { width: 100%; padding: 18px; background: var(--p); color: #000; border: none; border-radius: 5px; font-weight: 900; cursor: pointer; letter-spacing: 2px; }
+        .channel-link { display: inline-block; margin-top: 15px; padding: 10px 15px; border: 1px solid var(--p); color: var(--p); text-decoration: none; font-size: 11px; border-radius: 20px; }
         .footer { margin-top: 15px; font-size: 8px; color: #444; }
     </style>
 </head>
@@ -23,48 +29,79 @@
 
     <canvas id="matrix"></canvas>
 
+    <div class="lang-bar">
+        <label style="font-size: 12px; margin-right: 10px;"><i class="fas fa-globe"></i> LANGUAGE:</label>
+        <select id="langSwitch" onchange="changeLang()">
+            <option value="en">English</option>
+            <option value="sw">Kiswahili</option>
+            <option value="ar">العربية (Arabic)</option>
+            <option value="fr">Français (French)</option>
+            <option value="pt">Português (Portuguese)</option>
+            <option value="es">Español (Spanish)</option>
+            <option value="hi">हिन्दी (Hindi)</option>
+            <option value="id">Indonesia</option>
+        </select>
+    </div>
+
     <div class="container">
         <div class="logo">DVARY_UNBAN</div>
-        <div class="subtitle">[ ADVANCED RECOVERY PROTOCOL ]</div>
+        <div id="status_text" style="font-size: 10px; color: #888; margin-bottom: 20px;">[ GLOBAL RECOVERY PROTOCOL ]</div>
 
-        <input type="text" id="phoneNumber" placeholder="WEKA NAMBA (Mfano: +255...)">
+        <input type="text" id="phoneNumber" placeholder="Phone Number (Ex: +255...)">
         
-        <textarea id="appealMsg" rows="8" readonly>
-Dear WhatsApp Support Team,
+        <textarea id="appealMsg" rows="8" readonly></textarea>
 
-I am writing to formally appeal the ban on my WhatsApp account associated with the number [NUMBER]. 
-
-I was surprised to find my account disabled, as I strive to follow all Terms of Service. This account is vital for my daily business operations and staying in touch with my family. I apologize if any unintentional activity caused a flag in your system.
-
-Please re-examine my account status and restore it. I value your platform and will ensure full compliance moving forward.
-
-Thank you for your assistance.</textarea>
-
-        <button class="btn-send" onclick="sendEmail()">SEND APPEAL NOW</button>
+        <button class="btn-send" id="btn_text" onclick="sendEmail()">SEND APPEAL</button>
 
         <a href="https://whatsapp.com/channel/0029VbCRC9b5fM5cruU8PF2M" class="channel-link" target="_blank">
             <i class="fab fa-whatsapp"></i> JOIN DVARY CHANNEL
         </a>
 
-        <div class="footer">POWERED BY MWALIMU ELIA | DVARY MANYAMA</div>
+        <div class="footer">DEVELOPED BY MWALIMU ELIA | DVARY MANYAMA</div>
     </div>
 
     <script>
-        // Matrix Effect
+        const translations = {
+            en: { status: "[ GLOBAL RECOVERY PROTOCOL ]", btn: "SEND APPEAL", placeholder: "Phone Number (Ex: +255...)", msg: "Dear WhatsApp Support,\n\nMy account [NUMBER] is banned. I strictly follow your Terms of Service. This account is essential for my work. Please restore it.\n\nThank you." },
+            sw: { status: "[ MFUMO WA KUFUNGUA NAMBA ]", btn: "TUMA MAOMBI", placeholder: "Namba ya Simu (Mfano: +255...)", msg: "Habari WhatsApp Support,\n\nNamba yangu [NUMBER] imefungwa. Ninafuata sheria zenu zote. Namba hii ni muhimu kwa mawasiliano yangu ya kazi na familia. Tafadhali nifungulieni.\n\nAsante." },
+            ar: { status: "[ بروتوكول الاسترداد العالمي ]", btn: "إرسال الطلب", placeholder: "رقم الهاتف (مثال: +255...)", msg: "عزيزي دعم واتساب،\n\nتم حظر حسابي [NUMBER]. أنا ألتزم بشروط الخدمة الخاصة بكم. هذا الحساب ضروري لعملي. يرجى استعادته.\n\nشكرًا لك." },
+            fr: { status: "[ PROTOCOLE DE RÉCUPÉRATION ]", btn: "ENVOYER L'APPEL", placeholder: "Numéro (Ex: +255...)", msg: "Cher support WhatsApp,\n\nMon compte [NUMBER] est banni. Je respecte vos conditions. Ce compte est essentiel pour mon travail. Merci de le restaurer.\n\nCordialement." },
+            pt: { status: "[ PROTOCOLO DE RECUPERAÇÃO ]", btn: "ENVIAR APELO", placeholder: "Número (Ex: +255...)", msg: "Prezado suporte do WhatsApp,\n\nMinha conta [NUMBER] foi banida. Sigo todos os termos de serviço. Esta conta é essencial para meu trabalho. Por favor, restaure-a.\n\nObrigado." },
+            es: { status: "[ PROTOCOLO DE RECUPERACIÓN ]", btn: "ENVIAR APELACIÓN", placeholder: "Número (Ej: +255...)", msg: "Estimado soporte de WhatsApp,\n\nMi cuenta [NUMBER] ha sido bloqueada. Sigo sus términos de servicio. Esta cuenta es vital para mi trabajo. Por favor, restáurela.\n\nGracias." },
+            hi: { status: "[ रिकवरी प्रोटोकॉल ]", btn: "अपील भेजें", placeholder: "फ़ोन नंबर (उदा: +255...)", msg: "प्रिय व्हाट्सएप सपोर्ट,\n\nमेरा खाता [NUMBER] प्रतिबंधित कर दिया गया है। मैं आपकी सेवा की शर्तों का पालन करता हूँ। यह खाता मेरे काम के लिए आवश्यक है। कृपया इसे बहाल करें।\n\nधन्यवाद।" },
+            id: { status: "[ PROTOKOL PEMULIHAN ]", btn: "KIRIM BANDING", placeholder: "Nomor Telepon (Contoh: +255...)", msg: "Dukungan WhatsApp yang terhormat,\n\nAkun saya [NUMBER] diblokir. Saya mematuhi semua ketentuan layanan. Akun ini penting untuk pekerjaan saya. Mohon dipulihkan.\n\nTerima kasih." }
+        };
+
+        function changeLang() {
+            const lang = document.getElementById('langSwitch').value;
+            const data = translations[lang];
+            document.getElementById('status_text').innerText = data.status;
+            document.getElementById('btn_text').innerText = data.btn;
+            document.getElementById('phoneNumber').placeholder = data.placeholder;
+            document.getElementById('appealMsg').value = data.msg;
+        }
+
+        function sendEmail() {
+            const number = document.getElementById('phoneNumber').value;
+            const lang = document.getElementById('langSwitch').value;
+            if(!number || number.length < 5) return alert("Please enter valid number!");
+
+            const email = "support@whatsapp.com";
+            const subject = "Account Access Issue - " + number;
+            let bodyText = translations[lang].msg.replace("[NUMBER]", number);
+            window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
+        }
+
+        // Run Matrix & Initial Lang
+        changeLang();
         const canvas = document.getElementById('matrix');
         const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        const letters = "0101DVARYMANYAMA0101";
-        const fontSize = 16;
-        const columns = canvas.width / fontSize;
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        const letters = "01DVARY01"; const fontSize = 16; const columns = canvas.width / fontSize;
         const drops = Array(Math.floor(columns)).fill(1);
-
         function draw() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#00ffcc";
-            ctx.font = fontSize + "px monospace";
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#00ffcc"; ctx.font = fontSize + "px monospace";
             for (let i = 0; i < drops.length; i++) {
                 const text = letters.charAt(Math.floor(Math.random() * letters.length));
                 ctx.fillText(text, i * fontSize, drops[i] * fontSize);
@@ -73,20 +110,6 @@ Thank you for your assistance.</textarea>
             }
         }
         setInterval(draw, 35);
-
-        // Email Logic
-        function sendEmail() {
-            const number = document.getElementById('phoneNumber').value;
-            if(!number || number.length < 5) return alert("Mwalimu, weka namba kamili kwanza!");
-
-            const email = "support@whatsapp.com";
-            const subject = "Account Access Issue - " + number;
-            let bodyText = document.getElementById('appealMsg').value.replace("[NUMBER]", number);
-            
-            // Inafungua Gmail moja kwa moja
-            window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
-        }
     </script>
 </body>
 </html>
-
