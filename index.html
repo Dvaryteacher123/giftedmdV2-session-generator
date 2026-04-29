@@ -3,88 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DVARY DEEP-SCAN | SECURITY TOOL</title>
+    <title>DVARY SMART-HUB | AI & EDUCATION</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --neon: #00ffcc; --bg: #050810; --card: #0a0f1a; }
-        body { background: var(--bg); color: var(--neon); font-family: 'Share Tech Mono', monospace; margin: 0; padding: 15px; text-align: center; text-transform: uppercase; }
+        :root { --p: #00ffcc; --bg: #050810; --card: #0d1117; }
+        body { background: var(--bg); color: #fff; font-family: 'Poppins', sans-serif; margin: 0; padding: 0; }
         
-        .container { max-width: 450px; margin: 50px auto; padding: 30px; border: 1px solid var(--neon); background: var(--card); box-shadow: 0 0 20px rgba(0, 255, 204, 0.2); border-radius: 10px; }
-        .logo { font-size: 24px; font-weight: 900; letter-spacing: 5px; margin-bottom: 5px; color: #fff; }
-        .subtitle { font-size: 10px; color: #444; margin-bottom: 30px; }
+        .header { background: linear-gradient(45deg, #050810, #101d25); padding: 40px 20px; text-align: center; border-bottom: 2px solid var(--p); }
+        .logo { font-size: 28px; font-weight: 900; color: var(--p); letter-spacing: 3px; text-shadow: 0 0 10px var(--p); }
+        
+        .container { padding: 20px; max-width: 600px; margin: auto; }
+        
+        .section-box { background: var(--card); border-radius: 15px; padding: 20px; margin-bottom: 25px; border: 1px solid #222; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .section-box h2 { font-size: 16px; color: var(--p); margin-top: 0; display: flex; align-items: center; gap: 10px; text-transform: uppercase; }
+        
+        .item-link { display: flex; align-items: center; background: #161b22; padding: 15px; border-radius: 10px; margin-bottom: 10px; text-decoration: none; color: #ccc; transition: 0.3s; border: 1px solid transparent; }
+        .item-link:hover { border-color: var(--p); color: #fff; transform: translateX(10px); }
+        .item-link i { margin-right: 15px; color: var(--p); font-size: 22px; }
+        
+        /* AI SEARCH BOX */
+        .ai-container { background: #000; padding: 15px; border-radius: 10px; border: 1px solid var(--p); }
+        .search-wrapper { display: flex; align-items: center; background: #111; border-radius: 5px; padding: 5px; gap: 5px; }
+        input { flex: 1; padding: 12px; background: transparent; border: none; color: #fff; outline: none; font-family: inherit; }
+        
+        .icon-btn { background: none; border: none; color: var(--p); font-size: 18px; cursor: pointer; padding: 10px; transition: 0.3s; }
+        .icon-btn:hover { transform: scale(1.2); }
+        .mic-active { color: #ff003c; animation: pulse 1s infinite; }
+        
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
-        .info-row { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #111; font-size: 12px; }
-        .label { color: #555; }
-        .value { color: #fff; text-shadow: 0 0 5px var(--neon); }
+        .btn-main { width: 100%; padding: 15px; background: var(--p); color: #000; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 15px; }
 
-        .btn-scan { width: 100%; padding: 18px; background: var(--neon); color: #000; border: none; font-weight: 900; cursor: pointer; letter-spacing: 2px; margin-top: 25px; border-radius: 5px; }
-        
-        .radar { width: 60px; height: 60px; border: 2px solid var(--neon); border-radius: 50%; margin: 0 auto 20px; position: relative; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0, 255, 204, 0.4); } 70% { box-shadow: 0 0 0 20px rgba(0, 255, 204, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 255, 204, 0); } }
-        
-        .loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; display: none; }
+        .footer { text-align: center; padding: 30px; font-size: 11px; color: #444; }
+        .footer a { color: var(--p); text-decoration: none; }
     </style>
 </head>
 <body>
 
-    <div id="loader" class="loader-overlay">
-        <div class="radar"></div>
-        <p style="letter-spacing: 5px;">INJECTING_PROBES...</p>
+    <div class="header">
+        <div class="logo">DVARY SMART-HUB</div>
+        <p style="font-size: 12px; color: #888;">TEKNOLOJIA, ELIMU NA KAZI KWA VIJANA</p>
     </div>
 
     <div class="container">
-        <div class="logo">DVARY_SCAN_v1</div>
-        <div class="subtitle">[ OSINT SYSTEM READY ]</div>
-
-        <div id="scanResult">
-            <div class="info-row">
-                <span class="label">MY_IP_ADDRESS:</span>
-                <span class="value" id="ip">0.0.0.0</span>
-            </div>
-            <div class="info-row">
-                <span class="label">LOCATION:</span>
-                <span class="value" id="location">WAITING...</span>
-            </div>
-            <div class="info-row">
-                <span class="label">NETWORK_ISP:</span>
-                <span class="value" id="isp">WAITING...</span>
-            </div>
-            <div class="info-row">
-                <span class="label">DEVICE_OS:</span>
-                <span class="value" id="os">WAITING...</span>
+        
+        <div class="section-box">
+            <h2><i class="fas fa-robot"></i> DVARY AI ASSISTANT</h2>
+            <p style="font-size: 11px; color: #666; margin-bottom: 15px;">Uliza chochote kwa kuandika au bonyeza MIC kuongea:</p>
+            <div class="ai-container">
+                <div class="search-wrapper">
+                    <input type="text" id="aiQuery" placeholder="Andika swali lako hapa...">
+                    <button class="icon-btn" id="micBtn" onclick="startVoice()"><i class="fas fa-microphone"></i></button>
+                </div>
+                <button class="btn-main" onclick="askAi()">ULIZA AI SASA</button>
             </div>
         </div>
 
-        <button class="btn-scan" onclick="startDeepScan()">INITIATE DEEP SCAN</button>
+        <div class="section-box">
+            <h2><i class="fas fa-briefcase"></i> FURSA ZA AJIRA</h2>
+            <a href="https://www.ajira.go.tz/" target="_blank" class="item-link">
+                <i class="fas fa-university"></i>
+                <div><span>Portal ya Ajira Serikalini</span><br><small>Nafasi zote za Umma Tanzania</small></div>
+            </a>
+            <a href="https://www.zoomtanzania.com/jobs" target="_blank" class="item-link">
+                <i class="fas fa-search-dollar"></i>
+                <div><span>Ajira Sekta Binafsi</span><br><small>Makampuni na NGO's</small></div>
+            </a>
+        </div>
 
-        <a href="https://whatsapp.com/channel/0029VbCRC9b5fM5cruU8PF2M" style="display:block; margin-top:20px; color:#444; font-size:10px; text-decoration:none;">
-            <i class="fas fa-ellipsis-v"></i> JOIN DVARY ACADEMY
-        </a>
+        <div class="section-box">
+            <h2><i class="fas fa-graduation-cap"></i> KOZI ZA BURE</h2>
+            <a href="https://learndigital.withgoogle.com/digitalgarage" target="_blank" class="item-link">
+                <i class="fab fa-google"></i>
+                <div><span>Google Digital Garage</span><br><small>Pata cheti cha Google bure</small></div>
+            </a>
+            <a href="https://www.microsoft.com/en-us/trainingdays" target="_blank" class="item-link">
+                <i class="fab fa-microsoft"></i>
+                <div><span>Microsoft Training</span><br><small>Mafunzo ya Cloud na IT</small></div>
+            </a>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2026 DVARY MANYAMA | TECHNOLOGY EDUCATOR</p>
+        <a href="https://whatsapp.com/channel/0029VbCRC9b5fM5cruU8PF2M"><i class="fab fa-whatsapp"></i> JIUNGE NA CHANNEL YETU</a>
     </div>
 
     <script>
-        async function startDeepScan() {
-            const loader = document.getElementById('loader');
-            loader.style.display = 'flex';
+        // 1. KUTAFUTA KWA AI
+        function askAi() {
+            const query = document.getElementById('aiQuery').value;
+            if(!query) return alert("Mwalimu, andika swali kwanza!");
+            
+            // Inampeleka moja kwa moja kwenye Deep Search ya AI
+            window.open(`https://www.bing.com/search?q=${encodeURIComponent(query)}&showconv=1`, '_blank');
+        }
 
-            try {
-                // Tunatumia ipapi.co kupata data za kweli (Bure na Chapu)
-                const response = await fetch('https://ipapi.co/json/');
-                const data = await response.json();
+        // 2. VOICE RECOGNITION (SAUTI KUWA MAANDISHI)
+        function startVoice() {
+            const micBtn = document.getElementById('micBtn');
+            const input = document.getElementById('aiQuery');
 
-                setTimeout(() => {
-                    document.getElementById('ip').innerText = data.ip;
-                    document.getElementById('location').innerText = `${data.city}, ${data.country_name}`;
-                    document.getElementById('isp').innerText = data.org;
-                    document.getElementById('os').innerText = navigator.platform;
-                    
-                    loader.style.display = 'none';
-                }, 2000);
-
-            } catch (error) {
-                alert("ACCESS DENIED: ERROR_FETCHING_DATA");
-                loader.style.display = 'none';
+            // Angalia kama browser inasupport Voice
+            if (!('webkitSpeechRecognition' in window)) {
+                alert("Browser yako haisupport Voice Search. Tumia Chrome.");
+                return;
             }
+
+            const recognition = new webkitSpeechRecognition();
+            recognition.lang = "sw-TZ"; // Inatambua Kiswahili cha Tanzania
+            recognition.interimResults = false;
+
+            recognition.onstart = () => {
+                micBtn.classList.add('mic-active');
+                input.placeholder = "Ninasikiliza... Ongea sasa";
+            };
+
+            recognition.onresult = (event) => {
+                const text = event.results[0][0].transcript;
+                input.value = text;
+                micBtn.classList.remove('mic-active');
+                input.placeholder = "Andika swali lako hapa...";
+                // Baada ya kupata sauti, inatafuta automatically
+                setTimeout(() => { askAi(); }, 1000);
+            };
+
+            recognition.onerror = () => {
+                micBtn.classList.remove('mic-active');
+                alert("Sauti haijaeleweka, jaribu tena.");
+            };
+
+            recognition.onend = () => {
+                micBtn.classList.remove('mic-active');
+            };
+
+            recognition.start();
         }
     </script>
 </body>
